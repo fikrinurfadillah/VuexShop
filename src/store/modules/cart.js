@@ -38,7 +38,7 @@ export default {
         state.items.push(newItem);
       }
       state.qty++;
-      state.total += productData.price;
+      // state.total += productData.price;
     },
     removeProductFromCart(state, payload) {
       const productInCartIndex = state.items.findIndex(
@@ -51,6 +51,24 @@ export default {
       }
       state.total = state.total - prodData.price * prodData.qty;
     },
+    setGrandTotal(state, payload) {
+      const productInCartIndex = state.items.findIndex(
+        (ci) => ci.productId === payload.id
+      );
+      const prodData = state.items[productInCartIndex];
+      console.log(payload.checked);
+      // if (payload.checked === true) {
+
+      state.total = state.total + prodData.price * prodData.qty;
+      // }
+    },
+    resetGrandTotal(state, payload) {
+      const productInCartIndex = state.items.findIndex(
+        (ci) => ci.productId === payload.id
+      );
+      const prodData = state.items[productInCartIndex];
+      state.total = state.total - prodData.price * prodData.qty;
+    },
     addProductQuantity(state, payload) {
       const productInCartIndex = state.items.findIndex(
         (ci) => ci.productId === payload.id
@@ -58,7 +76,9 @@ export default {
       const prodData = state.items[productInCartIndex];
       prodData.qty += 1;
       state.qty = state.qty + 1;
-      state.total = state.total + prodData.price;
+      if (payload.checked === true) {
+        state.total = state.total + prodData.price;
+      }
     },
     reducePorductQuantity(state, payload) {
       const productInCartIndex = state.items.findIndex(
@@ -68,7 +88,9 @@ export default {
       if (prodData.qty > 1) {
         prodData.qty -= 1;
         state.qty--;
-        state.total = state.total - prodData.price;
+        if (payload.checked === true) {
+          state.total = state.total - prodData.price;
+        }
       }
     },
   },
