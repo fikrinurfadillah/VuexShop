@@ -49,14 +49,15 @@ export default {
       if (state.qty > 0) {
         state.qty = state.qty - prodData.qty;
       }
-      state.total = state.total - prodData.price * prodData.qty;
+      if (state.total !== 0) {
+        state.total = state.total - prodData.price * prodData.qty;
+      }
     },
     setGrandTotal(state, payload) {
       const productInCartIndex = state.items.findIndex(
         (ci) => ci.productId === payload.id
       );
       const prodData = state.items[productInCartIndex];
-      console.log(payload.checked);
       // if (payload.checked === true) {
 
       state.total = state.total + prodData.price * prodData.qty;
