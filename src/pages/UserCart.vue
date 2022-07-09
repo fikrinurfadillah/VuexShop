@@ -1,5 +1,7 @@
 <template>
   <section>
+    <input type="checkbox" name="selectAll" v-model="isSelectAll" />
+    <label for="selectAll">Select All</label>
     <h2>Your Cart</h2>
     <h3>
       Total Amount: <base-badge mode="elegant">${{ cartTotal }}</base-badge>
@@ -13,6 +15,8 @@
         :image="item.image"
         :price="item.price"
         :qty="item.qty"
+        :is-select-all="isSelectAll"
+        ref="child"
       ></cart-item>
     </ul>
   </section>
@@ -22,6 +26,12 @@
 import CartItem from '../components/cart/CartItem.vue';
 
 export default {
+  data() {
+    return {
+      isSelectAll: false,
+      selected: [],
+    };
+  },
   components: {
     CartItem,
   },
@@ -32,6 +42,21 @@ export default {
     cartItems() {
       return this.$store.getters['cart/products'];
     },
+  },
+  watch: {
+    isSelectAll() {
+      if (this.isSelectAll === true) {
+        this.selected.push(this.cartItems);
+      } else {
+        this.selected = [];
+      }
+    },
+  },
+  mounted() {
+    this.$watch(
+      '$refs.child.itemChecked',
+      (new_value) => (this.isSelectAll = new_value)
+    );
   },
 };
 </script>

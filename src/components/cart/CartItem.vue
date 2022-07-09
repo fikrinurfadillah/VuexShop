@@ -1,5 +1,6 @@
 <template>
   <li>
+    <input type="checkbox" v-model="itemChecked" />
     <div>
       <img :src="image" :alt="title" />
     </div>
@@ -26,12 +27,13 @@
 
 <script>
 export default {
-  props: ['prodId', 'title', 'image', 'price', 'qty'],
-  // data() {
-  //   return {
-  //     quantity: this.qty,
-  //   };
-  // },
+  props: ['prodId', 'title', 'image', 'price', 'qty', 'isSelectAll'],
+  data() {
+    return {
+      // quantity: this.qty,
+      itemChecked: false,
+    };
+  },
   computed: {
     itemTotal() {
       return (this.price * this.qty).toFixed(2);
@@ -41,17 +43,44 @@ export default {
     qty() {
       return 'disabled';
     },
+    itemChecked() {
+      if (this.itemChecked === true) {
+        this.$store.commit('cart/setGrandTotal', { id: this.prodId });
+      } else if (this.itemChecked === false) {
+        this.$store.commit('cart/resetGrandTotal', { id: this.prodId });
+      }
+    },
+    $route() {
+      this.itemChecked = false;
+    },
+    isSelectAll() {
+      this.itemChecked = this.isSelectAll;
+    },
   },
   methods: {
     remove() {
       this.$store.dispatch('cart/removeProductFromCart', { id: this.prodId });
     },
     addQty() {
-      this.$store.commit('cart/addProductQuantity', { id: this.prodId });
+      this.$store.commit('cart/addProductQuantity', {
+        id: this.prodId,
+        checked: this.itemChecked,
+      });
     },
     reduceQty() {
-      this.$store.commit('cart/reducePorductQuantity', { id: this.prodId });
+      this.$store.commit('cart/reducePorductQuantity', {
+        id: this.prodId,
+        checked: this.itemChecked,
+      });
     },
+    // checked() {
+    //   if (!this.itemChecked) {
+    //     this.$store.commit('cart/setGrandTotal', {
+    //       id: this.prodId,
+    //       checked: this.itemChecked,
+    //     });
+    //   }
+    // },
   },
 };
 </script>
